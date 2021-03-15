@@ -1,26 +1,29 @@
+const fs = require('fs');
+
 let botFlags = {
     polling: false,
     suggestions: false
 };
 
-exports.handle = function (target, context, msg, client) {
+exports.handle = function (target, context, msg, client, commandAlias) {
     // remove special character added by chatterino
     msg = msg.replace('\u{E0000}', '');
 
     // is user a mod
-    userMod = context['mod'] === true || context['user-type'] == 'mod'
+    const userMod = context['mod'] === true || context['user-type'] == 'mod';
 
     // Check if the first non-whitespace char in msg is !
     // which we will use as our prefix for bot commands
-    if (msg.trim()[0] === '!') {
+    if (msg.trim()[0] === commandAlias.get('prefix')) {
         // clean up whitespace and split command into parameters
         const commandParams = msg.trim().split(' ');
 
         // commands with no arguments
         if (commandParams.length === 1) {
             // help command
-            if (commandParams[0] === '!help') {
-                client.say(target, `Currently the only command is !roll. To see the usage of !command type !help command.`);
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('help')) {
+                client.say(target, `Currently the only command is ${commandAlias.get('prefix') + commandAlias.get('roll')}. 
+                    To see the usage of !command type !help command.`);
                 console.log(`* ${context.username} executed ${msg.trim()} command`);
                 return;
             }
@@ -30,16 +33,17 @@ exports.handle = function (target, context, msg, client) {
         // commands with two arguments
         else if (commandParams.length === 2) {
             // help command
-            if (commandParams[0] === '!help') {
-                if (commandParams[1] === 'roll') {
-                    client.say(target, `Syntax: !roll XdY. Rolls X dice with Y sides.`);
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('help')) {
+                if (commandParams[1] === commandAlias.get('roll')) {
+                    client.say(target, `Syntax: ${commandAlias.get('prefix') + commandAlias.get('help')} XdY. 
+                        Rolls X dice with Y sides.`);
                     console.log(`* ${context.username} executed ${msg.trim()} command`);
                     return;
                 }
             }
 
             // command to roll arbitrary dice with syntax !roll #d#
-            if (commandParams[0] === '!roll') {
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('roll')) {
                 const rollParam = commandParams[1].split('d');
 
                 if (rollParam.length === 2) {
@@ -49,7 +53,8 @@ exports.handle = function (target, context, msg, client) {
                     const sidesCap = 1000;
 
                     if (isNaN(num) || isNaN(sides)) {
-                        client.say(target, `Invalid argument for !roll. Usage should be !roll XdY.`);
+                        client.say(target, `Invalid argument for ${commandAlias.get('prefix') + commandAlias.get('help')}. 
+                            Usage should be ${commandAlias.get('prefix') + commandAlias.get('help')} XdY.`);
                     } else if (num < 0 || sides <= 0) {
                         client.say(target, `Cannot roll a negative number of dice or a dice with fewer than one side.`);
                     } else if (num === 0) {
@@ -63,7 +68,8 @@ exports.handle = function (target, context, msg, client) {
                         client.say(target, `${context.username} rolled ${rolls}`);
                     }
                 } else {
-                    client.say(target, `Invalid argument for !roll. Usage should be !roll XdY.`);
+                    client.say(target, `Invalid argument for ${commandAlias.get('prefix') + commandAlias.get('help')}. 
+                        Usage should be ${commandAlias.get('prefix') + commandAlias.get('help')} XdY.`);
                 }
 
                 console.log(`* ${context.username} executed ${msg.trim()} command`);
@@ -71,9 +77,9 @@ exports.handle = function (target, context, msg, client) {
             }
 
             // Open polling/suggestions
-            if (commandParams[0] === '!open') {
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('open')) {
                 if (userMod) {
-                    if (commandParams[1] === 'line') {
+                    if (commandParams[1] === commandAlias.get('suggestion')) {
                         if (!botFlags.suggestions) {
                             botFlags.suggestions = true;
                             client.say(target, `Suggestions are now open. Submit your suggestions using the command !line.`)
@@ -92,9 +98,9 @@ exports.handle = function (target, context, msg, client) {
             }
 
             // Close polling/suggestions
-            if (commandParams[0] === '!close') {
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('close')) {
                 if (userMod) {
-                    if (commandParams[1] === 'line') {
+                    if (commandParams[1] === commandAlias.get('suggestion')) {
                         if (botFlags.suggestions) {
                             botFlags.suggestions = false;
                             client.say(target, `Suggestions are now closed.`)
@@ -115,7 +121,7 @@ exports.handle = function (target, context, msg, client) {
 
         // Other commands
         else {
-            if (commandParams[0] = '!line') {
+            if (commandParams[0] === commandAlias.get('prefix') + commandAlias.get('suggestion')) {
 
             }
         }

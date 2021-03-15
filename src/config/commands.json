@@ -1,0 +1,8 @@
+[
+    ["prefix", "!"],
+    ["help", "help"],
+    ["roll", "roll"],
+    ["open", "open"],
+    ["close", "close"],
+    ["suggestion", "line"]
+]
