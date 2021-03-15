@@ -10,7 +10,7 @@ COPY ./src/package*.json ./
 RUN npm install
 
 # Bundle app source
-COPY ./src/* .
+COPY ./src/ .
 
 EXPOSE 80
 
