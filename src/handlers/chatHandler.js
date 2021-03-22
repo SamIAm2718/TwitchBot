@@ -12,7 +12,7 @@ exports.handle = function (target, context, msg, client, commandAlias) {
     // is user a mod
     const userMod = context['mod'] === true || context['user-type'] == 'mod';
 
-    // Check if the first non-whitespace char in msg is !
+    // Check if the first non-whitespace char in msg is 'prefix'
     // which we will use as our prefix for bot commands
     if (msg.trim()[0] === commandAlias.get('prefix')) {
         // clean up whitespace and split command into parameters
